@@ -1,0 +1,40 @@
+services:
+  mongodb:
+    image: mongo:5.0
+    container_name: mongodb
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - healthcare_network
+
+  migration_process:
+    build: .
+    container_name: migration_process
+    depends_on:
+      - mongodb
+    environment:
+      MONGO_URI: mongodb://${MONGO_USER}:${MONGO_PASSWORD}@mongodb:27017/
+      DB_NAME: healthcare
+      COLLECTION_NAME: patients
+      INPUT_CSV_FILE: /app/healthcare_dataset.csv
+      OUTPUT_CSV_FILE: /app/healthcare_dataset_cleaned.csv
+    volumes:
+      - ./:/app/
+    networks:
+      - healthcare_network
+    command: >
+      sh -c "python clean_csv.py &&
+             python migration.py &&
+             python test_integrity.py"
+
+volumes:
+  mongo-data:
+networks:
+  healthcare_network:
+    driver: bridge
