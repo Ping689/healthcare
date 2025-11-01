@@ -100,7 +100,7 @@ erDiagram
     INSURANCE {
         string patient_id
         string provider
-        double billing_amount
+        float billing_amount
     }
 
     TREATMENT {
@@ -127,3 +127,17 @@ Le script `create_database_users.py` met en place des utilisateurs avec des rôl
 
 - **`dbAdmin`** : Cet utilisateur peut gérer la structure de la base de données `healthcare` (créer/supprimer des collections, gérer les index), mais ne peut pas lire ou modifier les données des patients.
 - **`readWrite`** : Cet utilisateur peut lire et modifier les données dans la base de données `healthcare`, mais ne peut pas altérer la structure de la base (comme supprimer une collection).
+
+## Authentification à la Base de Données
+
+L'accès à MongoDB est sécurisé par un mécanisme d'authentification qui contrôle les permissions de chaque service ou utilisateur.
+
+### Gestion des Identifiants
+
+Les informations d'identification (noms d'utilisateur, mots de passe) ne sont pas stockées en clair dans le code ou les fichiers de configuration. Elles sont gérées via des variables d'environnement, dans un fichier `.env`.
+
+Ce fichier est spécifiquement listé dans le `.gitignore` pour s'assurer qu'il ne soit jamais versionné, évitant ainsi toute fuite accidentelle d'informations sensibles.
+
+### Chaîne de Connexion (MONGO_URI)
+
+Les scripts Python et les services utilisent ces variables d'environnement pour construire la chaîne de connexion `MONGO_URI`. Cette URI contient toutes les informations requises par le client pour s'authentifier auprès du serveur MongoDB.
