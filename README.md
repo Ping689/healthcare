@@ -115,20 +115,20 @@ erDiagram
 
 ```
 
-## Gestion des rôles au niveau de la base de données
+## Gestion des rôles 
 
 #### Le super-utilisateur `root`
 L'utilisateur `root` est le super-administrateur dans MongoDB. 
 - **Création** : Il est créé automatiquement au premier démarrage du service `mongodb` grâce aux variables d'environnement `MONGO_INITDB_ROOT_USERNAME` et `MONGO_INITDB_ROOT_PASSWORD` définies dans le `.env`.
 - **Privilèges** : Il possède des droits illimités dans MongoDB. Son rôle est d'effectuer des tâches administratives de haut niveau, comme la création de bases de données, la gestion des utilisateurs et de leurs rôles. 
 
-#### Autres rôles de base de données
+#### Autres rôles 
 Le script `create_database_users.py` met en place des utilisateurs avec des rôles intégrés de MongoDB pour des besoins spécifiques :
 
 - **`dbAdmin`** : Cet utilisateur peut gérer la structure de la base de données `healthcare` (créer/supprimer des collections, gérer les index), mais ne peut pas lire ou modifier les données des patients.
 - **`readWrite`** : Cet utilisateur peut lire et modifier les données dans la base de données `healthcare`, mais ne peut pas altérer la structure de la base (comme supprimer une collection).
 
-## Authentification à la base de données
+## Authentification
 
 ### Gestion des identifiants
 
