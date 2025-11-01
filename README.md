@@ -117,27 +117,25 @@ erDiagram
 
 ## Gestion des rôles au niveau de la base de données
 
-#### Le Super-Utilisateur `root`
+#### Le super-utilisateur `root`
 L'utilisateur `root` est le super-administrateur dans MongoDB. 
 - **Création** : Il est créé automatiquement au premier démarrage du service `mongodb` grâce aux variables d'environnement `MONGO_INITDB_ROOT_USERNAME` et `MONGO_INITDB_ROOT_PASSWORD` définies dans le `.env`.
 - **Privilèges** : Il possède des droits illimités dans MongoDB. Son rôle est d'effectuer des tâches administratives de haut niveau, comme la création de bases de données, la gestion des utilisateurs et de leurs rôles. 
 
-#### Autres Rôles de Base de Données
+#### Autres rôles de base de données
 Le script `create_database_users.py` met en place des utilisateurs avec des rôles intégrés de MongoDB pour des besoins spécifiques :
 
 - **`dbAdmin`** : Cet utilisateur peut gérer la structure de la base de données `healthcare` (créer/supprimer des collections, gérer les index), mais ne peut pas lire ou modifier les données des patients.
 - **`readWrite`** : Cet utilisateur peut lire et modifier les données dans la base de données `healthcare`, mais ne peut pas altérer la structure de la base (comme supprimer une collection).
 
-## Authentification à la Base de Données
+## Authentification à la base de données
 
-L'accès à MongoDB est sécurisé par un mécanisme d'authentification qui contrôle les permissions de chaque service ou utilisateur.
-
-### Gestion des Identifiants
+### Gestion des identifiants
 
 Les informations d'identification (noms d'utilisateur, mots de passe) ne sont pas stockées en clair dans le code ou les fichiers de configuration. Elles sont gérées via des variables d'environnement, dans un fichier `.env`.
 
 Ce fichier est spécifiquement listé dans le `.gitignore` pour s'assurer qu'il ne soit jamais versionné, évitant ainsi toute fuite accidentelle d'informations sensibles.
 
-### Chaîne de Connexion (MONGO_URI)
+### Chaîne de connexion (MONGO_URI)
 
 Les scripts Python et les services utilisent ces variables d'environnement pour construire la chaîne de connexion `MONGO_URI`. Cette URI contient toutes les informations requises par le client pour s'authentifier auprès du serveur MongoDB.
