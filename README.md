@@ -2,10 +2,12 @@
 
 Ce projet contient un processus automatisé pour migrer des données médicales d'un fichier CSV vers une base de données MongoDB, le tout entièrement conteneurisé à l'aide de Docker et Docker Compose.
 
-## Prérequis
+## Technologies
 
-* [Docker]
-* [Docker Compose]
+* Docker
+* Docker Compose
+* MongoDB
+* Python (pymongo)
 
 ## Comment lancer la migration
 
@@ -71,3 +73,57 @@ docker-compose down -v
 ```
 
 *   L'option `-v` est importante car elle supprime également le volume `mongo-data`, en assurant de repartir de zéro lors de la prochaine exécution.
+
+## Schéma NoSQL (Collection: `patients`)
+
+```mermaid
+erDiagram
+    PATIENTS {
+        string _id
+        string name
+        int age
+        string gender
+        string blood_type
+        string medical_condition
+    }
+
+    ADMISSION {
+        string patient_id
+        date date_of_admission
+        string admission_type
+        date discharge_date
+        int room_number
+        string doctor
+        string hospital
+    }
+
+    INSURANCE {
+        string patient_id
+        string provider
+        double billing_amount
+    }
+
+    TREATMENT {
+        string patient_id
+        string medication
+        string test_results
+    }
+
+    PATIENTS ||--|| ADMISSION : has
+    PATIENTS ||--|| INSURANCE : covered_by
+    PATIENTS ||--|| TREATMENT : receives
+
+```
+
+## Gestion des rôles au niveau de la base de données
+
+#### Le Super-Utilisateur `root`
+L'utilisateur `root` est le super-administrateur dans MongoDB. 
+- **Création** : Il est créé automatiquement au premier démarrage du service `mongodb` grâce aux variables d'environnement `MONGO_INITDB_ROOT_USERNAME` et `MONGO_INITDB_ROOT_PASSWORD` définies dans le `.env`.
+- **Privilèges** : Il possède des droits illimités dans MongoDB. Son rôle est d'effectuer des tâches administratives de haut niveau, comme la création de bases de données, la gestion des utilisateurs et de leurs rôles. 
+
+#### Autres Rôles de Base de Données
+Le script `create_database_users.py` met en place des utilisateurs avec des rôles intégrés de MongoDB pour des besoins spécifiques :
+
+- **`dbAdmin`** : Cet utilisateur peut gérer la structure de la base de données `healthcare` (créer/supprimer des collections, gérer les index), mais ne peut pas lire ou modifier les données des patients.
+- **`readWrite`** : Cet utilisateur peut lire et modifier les données dans la base de données `healthcare`, mais ne peut pas altérer la structure de la base (comme supprimer une collection).
